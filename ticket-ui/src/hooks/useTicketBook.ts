@@ -8,7 +8,7 @@ export interface UseTicketBookApi {
         phoneNumber: string,
         email: string,
         seatCount: number
-    )
+    ): Promise<void>
 }
 
 export interface UseTicketBook {
@@ -20,7 +20,7 @@ export const useTicketBook = (): UseTicketBook => {
     return {
         ticketBookState: {},
         ticketBookApi: {
-            bookTickets: () => { throw Error('not implemented')}
+            bookTickets: async () => { throw Error('not implemented')}
         }
     }
 }

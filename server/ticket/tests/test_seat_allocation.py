@@ -1,6 +1,6 @@
 import unittest
 
-from ticket.seat_allocation import mapReservedSeatsToArray, findAvailableSeats
+from ticket.seat_allocation import mapReservedSeatsToArray, findAvailableSeatsFor242, index2SeatId, findAvailableSeatsInSlot
 
 class TestMapReservedSeatsToArray(unittest.TestCase):
     def test_zero_array(self):
@@ -24,16 +24,57 @@ class TestMapReservedSeatsToArray(unittest.TestCase):
     def test_two_row_two_seats(self):
         self.assertEqual(mapReservedSeatsToArray(2, ["1A", "2A", "2F"]), [[[0], [], []], [[0], [3], []]])
 
-class TestFindAvailableSeats(unittest.TestCase):
-    def test_1_seat_0_available(self):
-        self.assertEqual(findAvailableSeats(0, 1, [], []), [])
+class TestFindAvailableSeatsInSlot(unittest.TestCase):
+    def test_1_seat(self):
+        self.assertEqual(findAvailableSeatsInSlot(4, [2, 4, 2], [False, True, False], [[[], [], []]]), [[[[], [0, 1, 2, 3], []]], True])
 
-    def test_1_seat_1_available(self):
-        self.assertEqual(findAvailableSeats(1, 1, [1], []), [['1A']])
+        # Not found if the 4-seat slot is disabled
+        self.assertEqual(findAvailableSeatsInSlot(4, [2, 4, 2], [True, False, True], [[[], [], []]]), [[[[], [], []]], False])
+
+
+class TestFindAvailableSeats(unittest.TestCase):
+    def test_1_seat_0_row(self):
+        self.assertEqual(findAvailableSeatsFor242(1, []), [])
+
+    def test_1_seat_1_row(self):
+        self.assertEqual(findAvailableSeatsFor242(1, [[[], [], []]]), [[[0], [], []]])
 
     def test_2_seat_1_available(self):
         with self.assertRaises(Exception):
-            findAvailableSeats(1, 1, [1], [])
+            findAvailableSeatsFor242(1, [])
 
-    def test_4_seat_8_available(self):
-        self.assertEqual(findAvailableSeats(1, 4, [2, 4, 2], [[], [], []]), [[], ['1C', '1D', '1E'], []])
+    def test_4_seats(self):
+        self.assertEqual(findAvailableSeatsFor242(4, [[[], [], []]]), [[[], [0, 1, 2, 3], []]])
+        
+        # No free slot
+        self.assertEqual(findAvailableSeatsFor242(4, [[[0], [0], [0]]]), [[[], [], []]])
+
+        # Foudn the slot at the second row
+        self.assertEqual(findAvailableSeatsFor242(
+            4,
+            [
+                [[0], [0], [0]], 
+                [[], [], []]
+            ]
+        ), [[[], [], []], [[], [0, 1, 2, 3], []]])
+    
+    def test_2_seats(self):
+        self.assertEqual(findAvailableSeatsFor242(2, [[[], [], []]]), [[['1A', '1B']]])
+        
+        # No free slot
+        # self.assertEqual(findAvailableSeats(2, [2, 4, 2], [[[0], [0], [0]]]), [[]])
+
+        # # Foudn the slot at the second row
+        # self.assertEqual(findAvailableSeats(
+        #     2, [2, 4, 2], 
+        #     [
+        #         [[0], [0, 1], [0]], 
+        #         [[], [], []]
+        #     ]
+        # ), [[], [['2C', '2D', '2E', '2F']]])
+
+class TestIndex2SeatId(unittest.TestCase):
+    def test_normal(self):
+        self.assertEqual(index2SeatId(0, 0), "1A")
+        self.assertEqual(index2SeatId(0, 1), "1B")
+        self.assertEqual(index2SeatId(7, 7), "8H")

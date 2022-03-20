@@ -28,10 +28,10 @@ class TicketBookTests(APITestCase):
             'telephone': '+8434345345',
             'email': 'test@gmail.com',
             'seat_count': '4',
-            'idempotent_id': uuid.uuid4()
+            'idempotent_id': str(uuid.uuid4())
         }
         response = self.client.post(url, data, format='json')
         # self.assertIsNone(response.data['error'])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(BookRequest.objects.count(), 1)
-        # self.assertEqual(SeatReservation.objects.count(), 4)
+        self.assertEqual(SeatReservation.objects.count(), 4)

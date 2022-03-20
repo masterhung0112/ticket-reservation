@@ -180,7 +180,7 @@ def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List
 
     foundSeated = [[[] for _ in [2, 4, 2]] for _ in range(len(reservedSeats))]
 
-    def assignSlot(foundSeatSlots):
+    def assignSlot(foundSeatSlots, dupReservedSeats, foundSeated):
         for foundSeatSlotRowIdx, foundSeatSlotRow in enumerate(foundSeatSlots):
             found = False
             for seatSlotIdx, seatSlot in enumerate(foundSeatSlotRow):
@@ -202,7 +202,7 @@ def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List
             seat4Slots -= 1
             seat2Slots += 2
         else:
-            assignSlot(foundSeatSlots)
+            assignSlot(foundSeatSlots, dupReservedSeats, foundSeated)
     
     targetConsecutiveSeatCount = 2
     for _ in range (0, seat2Slots):
@@ -215,9 +215,9 @@ def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List
                 seat2Slots -= 1
                 seat1Slots += 2
             else:
-                assignSlot(foundSeatSlots)
+                assignSlot(foundSeatSlots, dupReservedSeats, foundSeated)
         else:
-            assignSlot(foundSeatSlots)
+            assignSlot(foundSeatSlots, dupReservedSeats, foundSeated)
 
     targetConsecutiveSeatCount = 1
     for _ in range (0, seat1Slots):
@@ -225,6 +225,7 @@ def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List
         if found == False:
             raise NotEnoughSeatException("No enough seat")
         else:
-            assignSlot(foundSeatSlots)
+            assignSlot(foundSeatSlots, dupReservedSeats, foundSeated)
 
+    print(seat4Slots, seat2Slots, seat1Slots)
     return foundSeated

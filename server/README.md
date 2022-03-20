@@ -3,7 +3,9 @@
 ```
 pipenv install
 pipenv shell
-pip install pytest
+
+# On Ubuntu: sudo apt-get install libmysqlclient-dev
+pip install mysqlclient
 ```
 
 # Run
@@ -23,6 +25,8 @@ python manage.py runserver
 ```
 
 # Run Test
+
+Go to `mysite/settings.py`, change the default DB in `DATABASES` variable to sqlite3
 
 At folder `server`, run all tests
 ```

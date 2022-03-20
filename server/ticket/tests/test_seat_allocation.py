@@ -1,6 +1,6 @@
 import unittest
 
-from ticket.seat_allocation import mapReservedSeatsToArray, findAvailableSeatsFor242, index2SeatId, findAvailableSeatsInSlot, lotIdx2ColIdx
+from ticket.seat_allocation import mapReservedSeatsToArray, findAvailableSeatsFor242, index2SeatId, findAvailableSeatsInSlot, lotIdx2ColIdx, NotEnoughSeatException
 
 class TestMapReservedSeatsToArray(unittest.TestCase):
     def test_zero_array(self):
@@ -63,6 +63,10 @@ class TestFindAvailableSeats(unittest.TestCase):
     def test_2_seats(self):
         self.assertEqual(findAvailableSeatsFor242(2, [[[], [], [1]]]), [[[0, 1], [], []]])
         self.assertEqual(findAvailableSeatsFor242(2, [[[1], [], [1]]]), [[[], [0, 1], []]])
+
+    def test_not_enough_seat(self):
+        with self.assertRaises(NotEnoughSeatException):
+            findAvailableSeatsFor242(64, [[[], [], []]])
 
 class TestIndex2SeatId(unittest.TestCase):
     def test_normal(self):

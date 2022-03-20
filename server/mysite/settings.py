@@ -52,15 +52,6 @@ TEMPLATES = [
     },
 ]
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    "default": env.db(
-        "DATABASE_URL",
-        default="sqlite:////" + os.path.join(BASE_DIR, "db.sqlite3"),
-    )
-}
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 INSTALLED_APPS = [
@@ -90,4 +81,22 @@ STATIC_URL = "/static/"
 
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
+
+# Database
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+DATABASES = {
+    # "default": env.db(
+    #     "DATABASE_URL",
+    #     default="sqlite:////" + os.path.join(BASE_DIR, "db.sqlite3"),
+    # )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'flight',
+        'USER': 'flight',
+        'PASSWORD': 'flight',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
 }

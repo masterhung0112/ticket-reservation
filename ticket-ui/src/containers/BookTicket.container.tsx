@@ -10,20 +10,23 @@ const randomText = () => (Math.random() + 1).toString(36).substring(7);
 
 const BookTicketContainer: React.FC = () => {
   const { ticketBookState, ticketBookApi } = useTicketBook();
-  const [idempotentId, setIdempotentId] = useState(randomText());
+  // const [idempotentId, setIdempotentId] = useState(randomText());
   const [error, setError] = useState<string | undefined>(undefined);
 
   const submitTicketBook = async (formData: BookTicketFormData) => {
     try {
       setError(undefined);
+
+      // Submit the request of ticket book to the server
       await ticketBookApi.bookTickets(
         formData.username,
         formData.telephone,
         formData.email,
         parseFloat(formData.seat_count),
-        idempotentId
+        randomText()
       );
     } catch (e) {
+      // Set the error if there's any
       if (e instanceof Error) {
         setError(e.message);
       } else {
@@ -42,7 +45,7 @@ const BookTicketContainer: React.FC = () => {
     >
       {error ? (
         <Grid item md={8} xs={12}>
-          <Alert severity="error">error</Alert>
+          <Alert severity="error">{error}</Alert>
         </Grid>
       ) : null}
       <Grid item md={8} xs={12}>

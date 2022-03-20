@@ -59,23 +59,23 @@ class BookRequest(models.Model):
     pnr = models.TextField()
 
 class SeatReservation(models.Model):
-    objects = models.Manager()
+    # objects = models.Manager()
 
     # flight = models.OneToOneField(
     #     Flight, primary_key=True, on_delete=models.CASCADE)
     # )
-    flightId = models.TextField()
+    flightId = models.TextField(max_length=50)
 
-    request = models.OneToOneField(
-        BookRequest, primary_key=True, on_delete=models.CASCADE
+    request = models.ForeignKey(
+        BookRequest, on_delete=models.CASCADE
     )
     """The request which booked this seat"""
 
-    seatId = models.TextField()
+    seatId = models.TextField(max_length=2)
     """The ID of seat """
 
     class Meta:
         unique_together = (("flightId", "seatId"),)
 
     def __str__(self):
-        return f"seatreservation: {self.flight.id} {self.seatId}"
+        return f"seatreservation: {self.flightId} {self.seatId}"

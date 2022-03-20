@@ -8,6 +8,7 @@ from django.http import JsonResponse
 import uuid
 import random
 import string
+from django.db import transaction, IntegrityError
 
 from .models import TicketBookRequestSerializer, BookRequest, SeatReservation
 from .seat_allocation import NotEnoughSeatException, mapReservedSeatsToArray, findAvailableSeatsFor242, lotLocalIdx2SeatId
@@ -76,7 +77,6 @@ def ticket_book(request: Request) -> Response:
 
         # Find the free seats
         allocatedSeatRows = findAvailableSeatsFor242(seat_count, reservedSeatMap)
-
         allocatedSeatIds = []
 
         # There is enough seat, write the allocated seat to DB
@@ -87,7 +87,7 @@ def ticket_book(request: Request) -> Response:
                     seatReservation.flightId = flightId
                     seatReservation.request = book_request
                     seatReservation.seatId = lotLocalIdx2SeatId(rowIdx, slotIdx, allocatedSeatLocalIdx, seatFormat)
-                    seatReservation.save()
+                    seatReservation.save(force_insert=True)
                     allocatedSeatIds.append(seatReservation.seatId)
         # print('allocatedSeatIds', allocatedSeatIds)
 
@@ -110,6 +110,7 @@ def ticket_book(request: Request) -> Response:
             status=status.HTTP_400_BAD_REQUEST
         )
     except Exception as e:
+        # print(str(e))
         return Response(
             {"error": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR

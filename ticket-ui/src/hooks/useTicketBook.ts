@@ -13,6 +13,7 @@ export interface UseTicketBookState {
     bookRequestResult: BookRequestResult | undefined
 }
 
+// The list of API related to ticket
 export interface UseTicketBookApi {
   bookTickets(
     username: string,
@@ -23,13 +24,16 @@ export interface UseTicketBookApi {
   ): Promise<TicketBookReply>;
 }
 
+// Return type of useTicketBook hook
 export interface UseTicketBook {
   ticketBookState: UseTicketBookState;
   ticketBookApi: UseTicketBookApi;
 }
 
 export const useTicketBook = (): UseTicketBook => {
+  // Indicating that we are request response from server
   const [loading, setLoading] = useState(false);
+  // Store the result returned by server
   const [bookRequestResult, setBookRequestResult] = useState<BookRequestResult>()
 
   return {
@@ -67,7 +71,6 @@ export const useTicketBook = (): UseTicketBook => {
           // Convert response to the local data
           if (response.status === 200) {
             if (ticketBookReply.error) {
-              console.log('e', ticketBookReply.error)
               throw Error(ticketBookReply.error);
             }
 
@@ -78,7 +81,7 @@ export const useTicketBook = (): UseTicketBook => {
             return ticketBookReply;
           } else {
             if (ticketBookReply.error) {
-              throw Error(ticketBookReply.error);
+              throw new Error(ticketBookReply.error);
             }
             throw Error(`unknown error: ${response.status}`);
           }

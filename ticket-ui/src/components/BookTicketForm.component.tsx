@@ -26,10 +26,6 @@ export const BookTicketForm: React.FC<BookTicketFormProps> = ({
   } = useForm<BookTicketFormData>();
 
   const onFormSubmit = (data: BookTicketFormData) => {
-    // console.log("Email:", email, "Password: ", password);
-    // You should see email and password in console.
-    // ..code to submit form to backend here...
-    // console.log(data);
     submitBook && submitBook(data);
   };
 

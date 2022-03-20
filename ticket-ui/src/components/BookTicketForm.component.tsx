@@ -5,37 +5,31 @@ import { Controller, useForm } from "react-hook-form";
 
 export interface BookTicketFormData {
   username: string;
-  phoneNumber: string;
+  telephone: string;
   email: string;
-  seatCount: number;
+  seat_count: string;
 }
 
 export interface BookTicketFormProps {
+  loading: boolean;
   submitBook(formData: BookTicketFormData): Promise<void>;
 }
 
 export const BookTicketForm: React.FC<BookTicketFormProps> = ({
+  loading,
   submitBook,
 }) => {
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<BookTicketFormData>();
 
-  const handleOnChange = (value: any) => {
-    // this.setState({
-    //   phone: value,
-    // })
-    console.log(value);
-  };
-
   const onFormSubmit = (data: BookTicketFormData) => {
     // console.log("Email:", email, "Password: ", password);
     // You should see email and password in console.
     // ..code to submit form to backend here...
-    console.log(data)
+    // console.log(data);
     submitBook && submitBook(data);
   };
 
@@ -55,16 +49,20 @@ export const BookTicketForm: React.FC<BookTicketFormProps> = ({
               fullWidth
               margin="normal"
               error={!!errors.username}
+              disabled={loading}
             />
           )}
         />
         <Controller
           name="email"
           control={control}
-          rules={{ required: true, pattern: {
-            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: "Invalid email address"
-          }}}
+          rules={{
+            required: true,
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: "Invalid email address",
+            },
+          }}
           render={({ field }) => (
             <TextField
               {...field}
@@ -75,17 +73,22 @@ export const BookTicketForm: React.FC<BookTicketFormProps> = ({
               margin="normal"
               error={!!errors.email}
               helperText={errors.email && errors.email.message}
+              disabled={loading}
             />
           )}
         />
         <FormControl fullWidth margin="normal" required>
-          <PhoneInput
-            placeholder="Enter phone number"
-            onChange={handleOnChange}
+          <Controller
+            name="telephone"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <PhoneInput {...field} placeholder="Enter phone number" />
+            )}
           />
         </FormControl>
         <Controller
-          name="seatCount"
+          name="seat_count"
           control={control}
           rules={{ required: true }}
           render={({ field }) => (
@@ -100,11 +103,14 @@ export const BookTicketForm: React.FC<BookTicketFormProps> = ({
               required
               fullWidth
               margin="normal"
-              error={!!errors.seatCount}
+              error={!!errors?.seat_count}
+              disabled={loading}
             />
           )}
         />
-        <Button type="submit">Book</Button>
+        <Button type="submit" variant="contained" fullWidth disabled={loading}>
+          Book
+        </Button>
       </form>
     </Box>
   );

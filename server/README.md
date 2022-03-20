@@ -10,7 +10,7 @@ pip install mysqlclient
 
 # Run
 
-In `mysite`, edit environment variable in `.env` file
+Go to `mysite/settings.py`, change the variable for DB in `DATABASES` variable
 
 Run the following command in the first run
 ```

@@ -28,13 +28,16 @@ class TestFindAvailableSeatsInSlot(unittest.TestCase):
     def test_1_seat(self):
         self.assertEqual(findAvailableSeatsInSlot(4, [2, 4, 2], [False, True, False], [[[], [], []]]), [[[[], [0, 1, 2, 3], []]], True])
 
+        self.assertEqual(findAvailableSeatsInSlot(1, [2, 2, 2], [True, True, True], [[[0], [0, 1], []]]), [[[[1], [], []]], True])
+
         # Not found if the 4-seat slot is disabled
         self.assertEqual(findAvailableSeatsInSlot(4, [2, 4, 2], [True, False, True], [[[], [], []]]), [[[[], [], []]], False])
 
 
 class TestFindAvailableSeats(unittest.TestCase):
     def test_1_seat_0_row(self):
-        self.assertEqual(findAvailableSeatsFor242(1, []), [])
+        with self.assertRaises(Exception):
+            findAvailableSeatsFor242(1, []), []
 
     def test_1_seat_1_row(self):
         self.assertEqual(findAvailableSeatsFor242(1, [[[], [], []]]), [[[0], [], []]])
@@ -46,8 +49,8 @@ class TestFindAvailableSeats(unittest.TestCase):
     def test_4_seats(self):
         self.assertEqual(findAvailableSeatsFor242(4, [[[], [], []]]), [[[], [0, 1, 2, 3], []]])
         
-        # No free slot
-        self.assertEqual(findAvailableSeatsFor242(4, [[[0], [0], [0]]]), [[[], [], []]])
+        # No free 4-seat slot, use 2-seat slot
+        self.assertEqual(findAvailableSeatsFor242(4, [[[0], [0], [0]]]), [[[1], [1, 2, 3], []]])
 
         # Foudn the slot at the second row
         self.assertEqual(findAvailableSeatsFor242(
@@ -59,19 +62,8 @@ class TestFindAvailableSeats(unittest.TestCase):
         ), [[[], [], []], [[], [0, 1, 2, 3], []]])
     
     def test_2_seats(self):
-        self.assertEqual(findAvailableSeatsFor242(2, [[[], [], []]]), [[['1A', '1B']]])
-        
-        # No free slot
-        # self.assertEqual(findAvailableSeats(2, [2, 4, 2], [[[0], [0], [0]]]), [[]])
-
-        # # Foudn the slot at the second row
-        # self.assertEqual(findAvailableSeats(
-        #     2, [2, 4, 2], 
-        #     [
-        #         [[0], [0, 1], [0]], 
-        #         [[], [], []]
-        #     ]
-        # ), [[], [['2C', '2D', '2E', '2F']]])
+        self.assertEqual(findAvailableSeatsFor242(2, [[[], [], [1]]]), [[[0, 1], [], []]])
+        self.assertEqual(findAvailableSeatsFor242(2, [[[1], [], [1]]]), [[[], [0, 1], []]])
 
 class TestIndex2SeatId(unittest.TestCase):
     def test_normal(self):

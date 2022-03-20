@@ -84,7 +84,6 @@ def findAvailableSeatsInSlot(targetConsecutiveSeatCount: int, lotSize: List[int]
             for seatRowIdx, seatRow in enumerate(reservedSeats):
                 lastSeat = -1
                 if len(seatRow) != len(lotSize):
-                    print('reservedSeats', reservedSeats)
                     raise Exception(f"Seat Row slot {len(seatRow)} doesn't match slot size {len(lotSize)}")
                 
                 # In case the lot size is 4, [0, 1] -> [0, 1, 4]
@@ -97,12 +96,19 @@ def findAvailableSeatsInSlot(targetConsecutiveSeatCount: int, lotSize: List[int]
 
                     # If the free seats is greater than the target seat count, use the first slot
                     if free_seats >= targetConsecutiveSeatCount:
-                        for seatLocalIdx in range(0, targetConsecutiveSeatCount):
+                        for seatLocalIdx in range(lastSeat + 1, lastSeat + 1 + targetConsecutiveSeatCount):
                             foundSeated[seatRowIdx][lotSizeIdx].append(seatLocalIdx)                        
                         found = True
+                        break
                     
                     lastSeat = allocatedSeat
+                
+                if found:
+                    break
+            
         lotAccumulate += lot
+        if found:
+            break
     
     return [foundSeated, found]
 
@@ -141,9 +147,7 @@ def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List
         [[2A, 2B], [2E, 2F], [3G, 3H]]
     ]
     """
-
-    allSeatRowCount = len(reservedSeats)
-
+    
     seat4Slots = 0
     seat2Slots = 0
     seat1Slots = 0
@@ -188,6 +192,21 @@ def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List
         else:
             assignSlot(foundSeatSlots)
     
+    targetConsecutiveSeatCount = 2
+    for _ in range (0, seat2Slots):
+        # Find the 2-seat slot in two sides first
+        foundSeatSlots, found = findAvailableSeatsInSlot(targetConsecutiveSeatCount, [2, 4, 2], [True, False, True], dupReservedSeats)
+        if found == False:
+            # Find the 2-seat slot in 4-seat slot
+            foundSeatSlots, found = findAvailableSeatsInSlot(targetConsecutiveSeatCount, [2, 4, 2], [False, True, False], dupReservedSeats)
+            if found == False:
+                seat2Slots -= 1
+                seat1Slots += 2
+            else:
+                assignSlot(foundSeatSlots)
+        else:
+            assignSlot(foundSeatSlots)
+
     targetConsecutiveSeatCount = 1
     for _ in range (0, seat1Slots):
         foundSeatSlots, found = findAvailableSeatsInSlot(targetConsecutiveSeatCount, [2, 4, 2], [True, True, True], dupReservedSeats)

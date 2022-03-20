@@ -68,6 +68,9 @@ class TestFindAvailableSeats(unittest.TestCase):
         with self.assertRaises(NotEnoughSeatException):
             findAvailableSeatsFor242(64, [[[], [], []]])
 
+    def test_1_seat(self):
+        self.assertEqual(findAvailableSeatsFor242(2, [[[], [], [1]]]), [[[0, 1], [], []]])
+
 class TestIndex2SeatId(unittest.TestCase):
     def test_normal(self):
         self.assertEqual(index2SeatId(0, 0), "1A")

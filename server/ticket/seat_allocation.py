@@ -227,5 +227,4 @@ def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List
         else:
             assignSlot(foundSeatSlots, dupReservedSeats, foundSeated)
 
-    print(seat4Slots, seat2Slots, seat1Slots)
     return foundSeated

@@ -22,9 +22,6 @@ from ..models import SeatReservation, BookRequest
 
 class TicketBookTests(APITestCase):
     def test_new_book(self):
-        """
-        Ensure we can create a new account object.
-        """
         url = '/ticket/book'
         data = {
             'username': 'name 1',

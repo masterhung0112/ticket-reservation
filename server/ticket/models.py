@@ -10,8 +10,6 @@ class TicketBookRequest(models.Model):
     """
     User input the required fields
     """
-    # _REQUIRED_FIELDS = {"username", "telephone", "email", "seat_count", "idempotent_id"}
-
     username = models.TextField()
     telephone = models.TextField()
     email = models.TextField()

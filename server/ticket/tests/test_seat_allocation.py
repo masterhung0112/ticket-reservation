@@ -33,7 +33,6 @@ class TestFindAvailableSeatsInSlot(unittest.TestCase):
         # Not found if the 4-seat slot is disabled
         self.assertEqual(findAvailableSeatsInSlot(4, [2, 4, 2], [True, False, True], [[[], [], []]]), [[[[], [], []]], False])
 
-
 class TestFindAvailableSeats(unittest.TestCase):
     def test_1_seat_0_row(self):
         with self.assertRaises(Exception):

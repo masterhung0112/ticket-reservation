@@ -6,9 +6,11 @@ from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.http import JsonResponse
 import uuid
+import random
+import string
 
 from .models import TicketBookRequestSerializer, BookRequest, SeatReservation
-from .seat_allocation import NotEnoughSeatException, index2SeatId, mapReservedSeatsToArray, findAvailableSeatsFor242, lotLocalIdx2SeatId
+from .seat_allocation import NotEnoughSeatException, mapReservedSeatsToArray, findAvailableSeatsFor242, lotLocalIdx2SeatId
 
 @api_view(["POST"])
 @renderer_classes([JSONRenderer, BrowsableAPIRenderer])
@@ -40,18 +42,24 @@ def ticket_book(request: Request) -> Response:
     # except (ObjectDoesNotExist):
     #     pass
     # Query all allocated seats for the flight
-    
+
     try:
         # Find 
         book_request = BookRequest()
-        book_request.id = uuid.uuid4()
-        book_request.username = ticket_book_request.get('username')
+        book_request.id = str(uuid.uuid4())
+        book_request.name = ticket_book_request.get('username')
         book_request.telephone = ticket_book_request.get('telephone')
         book_request.email = ticket_book_request.get('email')
         book_request.idempotent_id = ticket_book_request.get('idempotent_id')
         book_request.save()
-
+        
         seat_count = int(ticket_book_request.get('seat_count'))
+
+        if seat_count > 64:
+            return Response(
+                {"error": "Not enough seat"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         allSeatReservations = SeatReservation.objects.filter(
             flightId = flightId
@@ -83,8 +91,15 @@ def ticket_book(request: Request) -> Response:
                     allocatedSeatIds.append(seatReservation.seatId)
         # print('allocatedSeatIds', allocatedSeatIds)
 
+        # Generate PNR number after all processing is successful
+        book_request.pnr = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        book_request.save()
+
         return Response(
-            {"allocated_seats": allocatedSeatIds},
+            {"allocated_seats": allocatedSeatIds, "request": { 
+                    "pnr": book_request.pnr
+                }
+            },
             status=status.HTTP_200_OK
         )
         
@@ -94,8 +109,8 @@ def ticket_book(request: Request) -> Response:
             {"error": "Not enough seat"},
             status=status.HTTP_400_BAD_REQUEST
         )
-
-    return Response(
-        {"isOK": True},
-        status=status.HTTP_200_OK
-    )
+    except Exception as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

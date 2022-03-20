@@ -1,6 +1,6 @@
 import unittest
 
-from ticket.seat_allocation import mapReservedSeatsToArray, findAvailableSeatsFor242, index2SeatId, findAvailableSeatsInSlot
+from ticket.seat_allocation import mapReservedSeatsToArray, findAvailableSeatsFor242, index2SeatId, findAvailableSeatsInSlot, lotIdx2ColIdx
 
 class TestMapReservedSeatsToArray(unittest.TestCase):
     def test_zero_array(self):
@@ -70,3 +70,9 @@ class TestIndex2SeatId(unittest.TestCase):
         self.assertEqual(index2SeatId(0, 0), "1A")
         self.assertEqual(index2SeatId(0, 1), "1B")
         self.assertEqual(index2SeatId(7, 7), "8H")
+
+class TestLotIdx2ColIdx(unittest.TestCase):
+    def test_normal(self):
+        self.assertEqual(lotIdx2ColIdx(2, 0, [2, 4, 4]), 6)
+        self.assertEqual(lotIdx2ColIdx(1, 3, [2, 4, 4]), 5)
+

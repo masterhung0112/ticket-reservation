@@ -1,7 +1,6 @@
 
-from typing import List, Set, Dict, Tuple, Optional
+from typing import List, Tuple, Optional
 import copy
-from xmlrpc.client import Boolean
 
 def mapReservedSeatsToArray(allSeatRowCount: int, reservedSeats: List[str], lotSize: List[int] = [2, 4, 2]) -> List[List[int]]:
     """
@@ -61,6 +60,20 @@ def mapReservedSeatsToArray(allSeatRowCount: int, reservedSeats: List[str], lotS
 class NotEnoughSeatException(Exception):
     pass
 
+# lotSize: (2, 4, 2), targetLotIdx: 2, localColIdx: 0 -> return (2 + 4 + 0)
+def lotIdx2ColIdx(targetLotIdx: int, localColIdx: int, lotSize: List[int]) -> int:
+    sumLot = 0
+    for lotIdx, lot in enumerate(lotSize):
+        if lotIdx != targetLotIdx:
+            sumLot = sumLot + lot
+        else:
+            sumLot = sumLot + localColIdx
+            break
+    return sumLot
+
+def lotLocalIdx2SeatId(rowIdx: int, targetLotIdx: int, localColIdx: int, lotSize: List[int]) -> str:
+    return index2SeatId(rowIdx, lotIdx2ColIdx(targetLotIdx, localColIdx, lotSize))
+    
 def index2SeatId(rowIdx: int, colIdx: int) -> str:
     return f"{rowIdx + 1}{chr(colIdx + ord('A'))}"
 
@@ -112,7 +125,7 @@ def findAvailableSeatsInSlot(targetConsecutiveSeatCount: int, lotSize: List[int]
     
     return [foundSeated, found]
 
-def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List[int]]) -> List[List[str]]:
+def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List[int]]) -> List[List[int]]:
     """
     Find the slots for consecutive seats
 
@@ -143,8 +156,8 @@ def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List
 
     Return value:
     [
-        [[1C, 1D], [1D, 1E], [1E, 1F], [1G, 1H],]
-        [[2A, 2B], [2E, 2F], [3G, 3H]]
+        [[0, 1], [], [],]
+        [[], [0, 1, 2, 3], [0, 1]]
     ]
     """
     
@@ -184,7 +197,6 @@ def findAvailableSeatsFor242(consecutiveSeatCount: int, reservedSeats: List[List
     targetConsecutiveSeatCount = 4
     for _ in range (0, seat4Slots):
         foundSeatSlots, found = findAvailableSeatsInSlot(targetConsecutiveSeatCount, [2, 4, 2], [False, True, False], dupReservedSeats)
-        # print('foundSeatSlots', foundSeatSlots)
         if found == False:
             # Split the current slot to the smaller slots
             seat4Slots -= 1

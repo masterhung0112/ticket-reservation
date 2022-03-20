@@ -4,6 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
+pytest-django = "*"
+pytest-asyncio = "*"
+pytest-cov = "*"
 
 [packages]
 django = ">=3.2, <4.0"

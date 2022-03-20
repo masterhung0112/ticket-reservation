@@ -1,3 +1,13 @@
+# Installation
+
+```
+pipenv install
+pipenv shell
+pip install pytest
+```
+
+# Run Test
+
 At folder `server`, run all tests
 ```
 pipenv shell
